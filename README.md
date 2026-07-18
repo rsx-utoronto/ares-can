@@ -31,11 +31,11 @@ To use this library, follow these steps:
 
 1. Visit the `ares_can_lib/rsx_python` directory in the repository.
 2. Copy the folder into the root directory of your workspace.
-3. Run your python script as a module in order to use the functions in the library. You can run a sample test with the command: `python3 -m functional_tests.servo_spin_test.servo_spin_test`.
+3. Run your python script as a module in order to use the functions in the library. Here's an example of a command running a script as a module: `python3 -m functional_tests.servo_spin_test.servo_spin_test`.
 4. Have fun! Use the functions you need to send your own CAN messages!
 
 **Usage**  
-Functions in the library can be called and used on the appropriate devices as you see fit. For more information of using this library, please read the rest of our documentation in the `docs` folder.
+Functions in the library can be called and used on the appropriate devices as you see fit. For more information and tutorials for using the library, please read the rest of our documentation in the `docs` folder.
 
 ### Ur Mom
 
