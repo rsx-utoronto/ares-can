@@ -15,7 +15,7 @@ pulse_pkg.multipacket_id = 0
 pulse_pkg.sender = SCI_MODULE_RPI
 pulse_pkg.receiver = SCI_MODULE_DRILL
 pulse_pkg.peripheral = SCI_PERIPHERAL_SERVO
-pulse_pkg.extra = SCI_ERROR_SUCCESS
+pulse_pkg.extra = SCI_NO_ERROR
 pulse_pkg.dlc = 8
 pulse_pkg.data = bytes([0x01, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF])
 
