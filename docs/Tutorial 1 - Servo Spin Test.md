@@ -54,19 +54,19 @@ For the purpose of this tutorial, we will be connecting an Arduino Nano to a Pyt
 
 ### **Running Instructions** 
 
-All example tests are located in the \`functional\_tests\` directory in the repository. They are meant as sanity tests to confirm the functionality of the library as well as the hardware setup. Understanding how this tutorial works will be helpful to understanding how to use various functions from the library.
+All example tests are located in the `functional\_tests` directory in the repository. They are meant as sanity tests to confirm the functionality of the library as well as the hardware setup. Understanding how this tutorial works will be helpful to understanding how to use various functions from the library.
 
 To run the test, follow these instructions:
 
 1. Wire up the hardware setup, as detailed the Hardware Setup section.  
 2. Follow the Installation Instructions page to install the library if you haven’t already done so.   
-3. Upload the code in \`functional\_tests/servo\_spin\_test/servo\_spin\_test.ino\` to the Arduino Nano.   
-4. Make sure you are in the \``` ares_can` `` (home) directory.  
-5. Activate your Python environment. Create one if you do not have one, and make sure to include everything inside \`requirements.txt\` inside your virtual environment.  
-   1. You can create a new virtual environment with the command \`python \-m venv .venv\`   
-   2. Then run \`.venv\\Scripts\\activate\`  
-   3. Lastly, install the required packages with the command \`python \-m pip install \-r requirements.txt\`  
-6. Set up CAN by running \`source setup\_can.sh\` in the terminal.   
-7. Run: \``` python -m functional_tests.servo_spin_test.servo_spin_test` ``in your terminal.   
-8. Your servo motor should start spinning\! If it does not, it’s time to debug. 
+3. Upload the code in `functional\_tests/servo\_spin\_test/servo\_spin\_test.ino` to the Arduino Nano.   
+4. Make sure you are in the `ares_can` (home) directory.  
+5. Activate your Python environment. Create one if you do not have one, and make sure to include everything inside `requirements.txt` inside your virtual environment.  
+   1. You can create a new virtual environment with the command `python \-m venv .venv`   
+   2. Then run `.venv\\Scripts\\activate` for Windows or `source .venv/bin/activate` for Linux.  
+   3. Lastly, install the required packages with the command `python3 \-m pip install \-r requirements.txt`  
+6. Set up CAN by running `source setup\_can.sh` in the terminal.   
+7. Run: `python3 -m functional_tests.servo_spin_test.servo_spin_test` in your terminal.   
+8. Your servo motor should start spinning! If it does not, it’s time to debug. 
 
