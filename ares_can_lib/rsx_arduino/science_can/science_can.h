@@ -1,6 +1,6 @@
 #pragma once
 
-#include <mcp2515.h>
+#include <mcp2515.h> // clang-format off
 
 #include <inttypes.h>
 
