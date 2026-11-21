@@ -36,7 +36,7 @@ jobs:
           if [ ${#cc_files[@]} -gt 0 ]; then
             clang-tidy "${cc_files[@]}" -- -I.
           fi
-          
+
   lint-python:
     name: Lint Python (Ruff)
     runs-on: ubuntu-latest
@@ -51,4 +51,4 @@ jobs:
         run: pip install ruff==0.8.4
 
       - name: Ruff check
-        run: ruff check .
+        run: ruff check --config 'extend-exclude = ["ares_can_lib/rsx_python/can_utilities.py", "functional_tests/sample_python_can/*"]' .

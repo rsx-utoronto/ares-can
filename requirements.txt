@@ -1,4 +1,5 @@
 python-can 
 numpy 
+ruff==0.17.6 
 # rospy
 # std_msgs

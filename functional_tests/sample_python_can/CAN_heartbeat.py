@@ -1,22 +1,25 @@
 import can
-from functional_tests.sample_python_can.CAN_utilities import generate_can_id, initialize_bus, CMD_API_NONRIO_HB
+
+from functional_tests.sample_python_can.can_utilities import (
+    CMD_API_NONRIO_HB,
+    generate_can_id,
+    initialize_bus,
+)
 
 # Instantiate CAN bus
 BUS = initialize_bus()
 
 hb = can.Message(
-		arbitration_id= generate_can_id(
-			dev_id= 0x0, 
-			api= CMD_API_NONRIO_HB), 
-		data= bytes([0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF]), 
-		is_extended_id= True,
-		is_remote_frame = False, 
-		is_error_frame = False
-	)
+    arbitration_id=generate_can_id(dev_id=0x0, api=CMD_API_NONRIO_HB),
+    data=bytes([0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF]),
+    is_extended_id=True,
+    is_remote_frame=False,
+    is_error_frame=False,
+)
 
 # global BUS
 
-task = BUS.send_periodic(hb, 0.01, store_task= False)
+task = BUS.send_periodic(hb, 0.01, store_task=False)
 print("Heartbeat initiated")
 
 while True:

@@ -2,7 +2,6 @@
 # Able to be recieved by arduino
 
 from ares_can_lib.rsx_python.science_can import *
-from ares_can_lib.rsx_python.CAN_utilities import initialize_bus
 
 # Instantiate CAN bus
 BUS = initialize_bus()
@@ -22,8 +21,7 @@ multipacket_request.data = bytes([0x01, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF
 TX_BUFFER.append(multipacket_request)
 process_tx(BUS)
 
-import time
-while (True):
+while True:
     # We are in the loop!
     msg_received = ScienceCanPacket()
     process_rx(BUS)
@@ -38,7 +36,7 @@ while (True):
                 print("Found Spectrometer Data Packet")
                 combined_data = combine_multipacket_data(msg_received)
                 # COMBINED DATA CONTAINS SPECTROMETER DATA IN ARRAY OF 288 PIXELS
-                # Plot here directly 
+                # Plot here directly
                 print(f"All Multipacket Data: {combined_data}")
                 end = 1
             else:

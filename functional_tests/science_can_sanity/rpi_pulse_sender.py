@@ -1,9 +1,9 @@
 # Enables RPi to send a series of sanity pulses
 # Able to be recieved by arduino
 
-import can
+from can_utilities import initialize_bus
 from science_can import *
-from CAN_utilities import initialize_bus
+
 # from CAN_utilities import generate_can_id, initialize_bus, CMD_API_NONRIO_HB
 
 # Instantiate CAN bus
@@ -27,7 +27,7 @@ pulse = assemble_frame_from_SCP(rsx_sci_pkt=pulse_pkg)
 
 print("We got here")
 
-task = BUS.send_periodic(pulse, 0.01, store_task= False)
+task = BUS.send_periodic(pulse, 0.01, store_task=False)
 print("Pulse signal initiated")
 
 while True:

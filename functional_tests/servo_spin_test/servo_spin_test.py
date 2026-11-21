@@ -1,8 +1,8 @@
 # Enables RPi to send a series spin commands to a servo over CAN
 # Able to be recieved by arduino
 
+from ares_can_lib.rsx_python.can_utilities import initialize_bus
 from ares_can_lib.rsx_python.science_can import *
-from ares_can_lib.rsx_python.CAN_utilities import initialize_bus
 
 # Instantiate CAN bus
 BUS = initialize_bus()
@@ -22,8 +22,11 @@ pulse_pkg.data = bytes([0x01, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF])
 pulse = assemble_frame_from_SCP(rsx_sci_pkt=pulse_pkg)
 
 import time
-while (True):
-    pulse_pkg.data = bytes([(pulse_pkg.data[0] + 1) % 18, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF])
+
+while True:
+    pulse_pkg.data = bytes(
+        [(pulse_pkg.data[0] + 1) % 18, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF]
+    )
     TX_BUFFER.append(pulse_pkg)
     process_tx(BUS)
     time.sleep(1)
