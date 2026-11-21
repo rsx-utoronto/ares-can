@@ -19,6 +19,12 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y clang-format clang-tidy
 
+      - name: Install Arduino CLI and AVR core
+        run: |
+          curl -fsSL https://raw.githubusercontent.com/arduino/arduino-cli/master/install.sh | BINDIR=/usr/local/bin sh
+          arduino-cli core update-index
+          arduino-cli core install arduino:avr
+
       - name: Install mcp2515 library headers
         run: |
           git clone --depth 1 https://github.com/autowp/arduino-mcp2515.git /tmp/mcp2515
@@ -33,12 +39,17 @@ jobs:
           fi
           clang-format --dry-run --Werror "${files[@]}"
 
-      - name: Run clang-tidy on C/C++ sources (optional)
+      - name: Run clang-tidy on C/C++ sources
         run: |
           set -euo pipefail
+          SPI_DIR=$(find /home/runner/.arduino15/packages/arduino -path "*/libraries/SPI/src" -type d | head -n 1)
+          if [ -z "${SPI_DIR}" ]; then
+            echo "Could not locate SPI.h directory" >&2
+            exit 1
+          fi
           mapfile -d '' cc_files < <(find . -type f \( -name "*.c" -o -name "*.cpp" \) -not -path "*/.*" -print0)
           if [ ${#cc_files[@]} -gt 0 ]; then
-            clang-tidy "${cc_files[@]}" -- -I. -I/tmp/mcp2515
+            clang-tidy "${cc_files[@]}" -- -I. -I/tmp/mcp2515 -I"${SPI_DIR}"
           fi
 
   lint-python:
