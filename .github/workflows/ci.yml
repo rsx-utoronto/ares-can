@@ -1,0 +1,54 @@
+name: RPi Test
+
+on:
+  push: # Runs tests for all branches 
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  clang-lint:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install clang-format and clang-tidy
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y clang-format clang-tidy
+
+      - name: Check formatting with clang-format
+        run: |
+          set -euo pipefail
+          mapfile -d '' files < <(find . -type f \( -name "*.ino" -o -name "*.c" -o -name "*.cpp" -o -name "*.h" \) -not -path "*/.*" -print0)
+          if [ ${#files[@]} -eq 0 ]; then
+            echo "No .ino, .c, .cpp, or .h files found."
+            exit 0
+          fi
+          clang-format --dry-run --Werror "${files[@]}"
+
+      - name: Run clang-tidy on C/C++ sources (optional)
+        run: |
+          set -euo pipefail
+          mapfile -d '' cc_files < <(find . -type f \( -name "*.c" -o -name "*.cpp" \) -not -path "*/.*" -print0)
+          if [ ${#cc_files[@]} -gt 0 ]; then
+            clang-tidy "${cc_files[@]}" -- -I.
+          fi
+          
+  lint-python:
+    name: Lint Python (Ruff)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install Ruff
+        run: pip install ruff==0.8.4
+
+      - name: Ruff check
+        run: ruff check .
