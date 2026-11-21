@@ -39,7 +39,7 @@ constexpr int kMaxLength = (1 << (kFrameIndexBits + 1));
 constexpr int kOneShotLength = 8; // 8 Bytes
 constexpr int kMaxStoredPacket = 1;
 
-static BufferInfo sample_extraction_buffer;
+BufferInfo sample_extraction_buffer;
 
 struct ResourceState {
   // Data
