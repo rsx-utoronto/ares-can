@@ -73,7 +73,7 @@ jobs:
           python-version: "3.12"
 
       - name: Install Ruff
-        run: pip install ruff==0.8.4
+        run: pip install -r requirements.txt
 
       - name: Ruff check
         run: ruff check --config 'extend-exclude = ["ares_can_lib/rsx_python/can_utilities.py", "functional_tests/sample_python_can/*"]' .
