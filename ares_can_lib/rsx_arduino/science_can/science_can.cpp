@@ -7,8 +7,7 @@
 
 namespace Science {
 
-void print_can_message(const ScienceCANMessage& message)
-{
+void print_can_message(const ScienceCANMessage &message) {
   Serial.print("Prio: ");
   Serial.print(message.priority_);
   Serial.print(", MID: ");
@@ -40,12 +39,12 @@ constexpr int kMaxLength = (1 << (kFrameIndexBits + 1));
 constexpr int kOneShotLength = 8; // 8 Bytes
 constexpr int kMaxStoredPacket = 1;
 
-static BufferInfo sample_extraction_buffer;
+BufferInfo sample_extraction_buffer;
 
 struct ResourceState {
   // Data
-  uint8_t* base_;
-  uint8_t* pos_;
+  uint8_t *base_;
+  uint8_t *pos_;
   uint16_t len_;
 
   // CAN
@@ -58,26 +57,22 @@ struct ResourceState {
 };
 
 volatile bool run_mpm = false;
-volatile int recv;
+volatile module_t recv;
 struct ResourceTable {
 public:
-  ResourceTable()
-  {
+  ResourceTable() {
     begin_ = &arr_[0];
     end_ = &arr_[kMaxStoredPacket];
   }
 
-  ResourceState* alloc(const uint8_t* base,
-    const uint16_t len,
-    const int frame_index)
-  {
+  ResourceState *alloc(uint8_t *base, const uint16_t len,
+                       const int frame_index) {
 
-    ResourceState* resource = begin_;
     int cnt = 0;
     while (arr_[cnt].available_ == 1 && cnt < kMaxStoredPacket) {
       cnt++;
     }
-    resource = &arr_[cnt];
+    ResourceState *resource = &arr_[cnt];
     resource->available_ = 0;
     resource->base_ = base;
     resource->pos_ = base;
@@ -89,13 +84,12 @@ public:
     return resource;
   }
 
-  int free(const int frame_index)
-  {
+  int free(const int frame_index) {
     int cnt = 0;
-    while(begin_[cnt].mapped_index_ != frame_index && cnt < kMaxStoredPacket) {
+    while (begin_[cnt].mapped_index_ != frame_index && cnt < kMaxStoredPacket) {
       cnt++;
     }
-    ResourceState* resource = &arr_[cnt];
+    ResourceState *resource = &arr_[cnt];
 
     resource->base_ = nullptr;
     resource->len_ = 0;
@@ -107,24 +101,23 @@ public:
     return 0;
   }
 
-  ResourceState* get(const int frame_index)
-  {
+  ResourceState *get(const int frame_index) {
 
     int counter = 0;
     while (arr_[counter].mapped_index_ != frame_index &&
-      counter < kMaxStoredPacket) {
+           counter < kMaxStoredPacket) {
       counter++;
     }
     return &arr_[counter];
   }
 
   // Called by Sender
-  ScienceCANMessage getNextCAN(const int frame_index)
-  {
-    ResourceState* resource = get(frame_index);
+  ScienceCANMessage getNextCAN(const int frame_index) {
+    ResourceState *resource = get(frame_index);
     ScienceCANMessage message;
 
-    const int sent_progress = reinterpret_cast<int>(resource->pos_) - reinterpret_cast<int>(resource->base_);
+    const int sent_progress = reinterpret_cast<int>(resource->pos_) -
+                              reinterpret_cast<int>(resource->base_);
     const int remaining = resource->len_ - sent_progress;
 
 #if defined(DEBUG_MPM)
@@ -166,25 +159,22 @@ public:
     return message;
   }
 
-  void setNextCAN(ScienceCANMessage message)
-  {
+  void setNextCAN(ScienceCANMessage message) {
     const int frame_index = message.multipacket_id_;
-    ResourceState* resource = get(frame_index);
-    uint8_t* ptr = resource->base_ + message.extra_ * 2;
+    ResourceState *resource = get(frame_index);
+    uint8_t *ptr = resource->base_ + message.extra_ * 2;
     for (int i = 0; i < message.dlc_; ++i) {
       *ptr++ = message.data_[i];
     }
   }
 
-  void init()
-  {
+  void init() {
     for (int i = 0; i < kMaxStoredPacket; ++i) {
       arr_[i].available_ = 1;
     }
   }
 
-  int GetAvailableSlots()
-  {
+  int GetAvailableSlots() {
     int available_slots = 0;
     for (int i = 0; i < kMaxStoredPacket; ++i) {
       if (arr_[i].available_) {
@@ -196,9 +186,8 @@ public:
 
 private:
   ResourceState arr_[kMaxStoredPacket];
-  const ResourceState* begin_;
-  const ResourceState* end_;
-
+  ResourceState *begin_;
+  ResourceState *end_;
 };
 
 static ResourceTable send_table;
@@ -206,7 +195,7 @@ static ResourceTable send_table;
 volatile bool queue_send = false;
 volatile int frame = -1;
 
-}
+} // namespace MPM
 
 CANBuffer rx_buffer;
 CANBuffer tx_buffer;
@@ -220,8 +209,7 @@ void can_setup() {
   MPM::send_table.init();
 }
 
-void parse_can_message(const can_frame& frame,
-                       ScienceCANMessage* message) {
+void parse_can_message(const can_frame &frame, ScienceCANMessage *message) {
   uint32_t can_id = frame.can_id;
   message->extra_ = can_id & 0xFFF;
   can_id >>= 12;
@@ -242,8 +230,7 @@ void parse_can_message(const can_frame& frame,
   }
 }
 
-void to_can_frame(const ScienceCANMessage* message,
-                  can_frame* frame) {
+void to_can_frame(const ScienceCANMessage *message, can_frame *frame) {
   uint32_t can_id = 0b1000;
   can_id |= message->priority_ & 0x1;
   can_id <<= 4;
@@ -285,7 +272,7 @@ int process_rx() {
     }
     Serial.println("Received");
 #if defined(DEBUG_MPM)
-  Serial.println("PROCESS RX");
+    Serial.println("PROCESS RX");
 #endif
 
 #if defined(PRINT_ALL_CAN)
@@ -323,8 +310,7 @@ int process_tx() {
 #endif
       MPM::queue_send = false;
       MPM::send_table.alloc(MPM::sample_extraction_buffer.base_,
-        MPM::sample_extraction_buffer.len_,
-        MPM::frame);
+                            MPM::sample_extraction_buffer.len_, MPM::frame);
       MPM::run_mpm = true;
 #if defined(DEBUG_MPM)
       Serial.println("Allocated tracker for MCP library.");
@@ -335,8 +321,7 @@ int process_tx() {
   }
   if (MPM::run_mpm) {
     while (!tx_buffer.full()) {
-      const ScienceCANMessage c =
-        MPM::send_table.getNextCAN(MPM::frame);
+      const ScienceCANMessage c = MPM::send_table.getNextCAN(MPM::frame);
       tx_buffer.push(c);
       if (c.extra_ == 65535) {
         Serial.println("ENDING FRAME");
@@ -344,7 +329,6 @@ int process_tx() {
       }
     }
   }
-
 
   int cnt = 0;
   while (!tx_buffer.empty()) {
@@ -363,4 +347,4 @@ int process_tx() {
   return cnt;
 }
 
-};  // namespace Science
+}; // namespace Science

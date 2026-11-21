@@ -1,7 +1,7 @@
 name: RPi Test
 
 on:
-  push: # Runs tests for all branches 
+  push: # Runs tests for all branches
   workflow_dispatch:
 
 permissions:
@@ -14,10 +14,20 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Install clang-format and clang-tidy
+      - name: Install clang-format, clang-tidy, git, and avr-libc
         run: |
           sudo apt-get update
-          sudo apt-get install -y clang-format clang-tidy
+          sudo apt-get install -y clang-format clang-tidy git avr-libc gcc-avr
+
+      - name: Install Arduino CLI and AVR core
+        run: |
+          curl -fsSL https://raw.githubusercontent.com/arduino/arduino-cli/master/install.sh | BINDIR=/usr/local/bin sh
+          arduino-cli core update-index
+          arduino-cli core install arduino:avr
+
+      - name: Install mcp2515 library headers
+        run: |
+          git clone --depth 1 https://github.com/autowp/arduino-mcp2515.git /tmp/mcp2515
 
       - name: Check formatting with clang-format
         run: |
@@ -32,9 +42,24 @@ jobs:
       - name: Run clang-tidy on C/C++ sources (optional)
         run: |
           set -euo pipefail
+          AVR_CORE_DIR=$(find /home/runner/.arduino15/packages/arduino/hardware/avr -path "*/cores/arduino" -type d | head -n 1)
+          AVR_VARIANT_DIR=$(find /home/runner/.arduino15/packages/arduino/hardware/avr -path "*/variants/standard" -type d | head -n 1)
+          SPI_DIR=$(find /home/runner/.arduino15/packages/arduino/hardware/avr -path "*/libraries/SPI/src" -type d | head -n 1)
+          if [ -z "${AVR_CORE_DIR}" ] || [ -z "${AVR_VARIANT_DIR}" ] || [ -z "${SPI_DIR}" ]; then
+            echo "Could not locate Arduino core, variant, or SPI header directories" >&2
+            exit 1
+          fi
           mapfile -d '' cc_files < <(find . -type f \( -name "*.c" -o -name "*.cpp" \) -not -path "*/.*" -print0)
           if [ ${#cc_files[@]} -gt 0 ]; then
-            clang-tidy "${cc_files[@]}" -- -I.
+            clang-tidy "${cc_files[@]}" -- \
+              --target=avr \
+              -mmcu=atmega328p \
+              -I. \
+              -I/tmp/mcp2515 \
+              -I"${AVR_CORE_DIR}" \
+              -I"${AVR_VARIANT_DIR}" \
+              -I"${SPI_DIR}" \
+              -isystem/usr/avr/include
           fi
 
   lint-python:

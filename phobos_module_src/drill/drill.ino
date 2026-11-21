@@ -1,6 +1,5 @@
-#include <science_can.h>
 #include <devices/can_config.h>
-
+#include <science_can.h>
 
 #include <Servo.h>
 
@@ -43,11 +42,9 @@ void setup() {
   pinMode(ULTRASONIC_SENSOR_TRIG_PIN, OUTPUT);
   pinMode(UNTRASONIC_SENSOR_ECHO_PIN, INPUT);
   pinMode(ELECTROMAGNET_PIN, OUTPUT);
-
 }
 
-void servo_step(int steps, int angle)
-{
+void servo_step(int steps, int angle) {
   static int vel = 0;
   vel += angle * steps;
   vel %= 180;
@@ -84,20 +81,18 @@ void loop() {
     }
     if (incoming_message.peripheral_ = kPeripheralUltrasonic) {
       float distance = sample_ultrasonic();
-      Science::ScienceCANMessage msg = {
-        .priority_ = 0,
-        .multipacket_id_ = 0,
-        .sender_ = kModuleDrill,
-        .receiver_ = kModuleRPi,
-        .peripheral_ = kPeripheralUltrasonic,
-        .extra_ = 0,
-        .dlc_ = 4
-      };
+      Science::ScienceCANMessage msg = {.priority_ = 0,
+                                        .multipacket_id_ = 0,
+                                        .sender_ = kModuleDrill,
+                                        .receiver_ = kModuleRPi,
+                                        .peripheral_ = kPeripheralUltrasonic,
+                                        .extra_ = 0,
+                                        .dlc_ = 4};
 
-      msg.data_[0] = *reinterpret_cast<uint8_t*>(&distance);
-      msg.data_[1] = *(reinterpret_cast<uint8_t*>(&distance) + 1);
-      msg.data_[2] = *(reinterpret_cast<uint8_t*>(&distance) + 2);
-      msg.data_[3] = *(reinterpret_cast<uint8_t*>(&distance) + 3);
+      msg.data_[0] = *reinterpret_cast<uint8_t *>(&distance);
+      msg.data_[1] = *(reinterpret_cast<uint8_t *>(&distance) + 1);
+      msg.data_[2] = *(reinterpret_cast<uint8_t *>(&distance) + 2);
+      msg.data_[3] = *(reinterpret_cast<uint8_t *>(&distance) + 3);
 
       Science::tx_buffer.push(msg);
     }
@@ -113,5 +108,3 @@ void loop() {
     Serial.println(" Messages.");
   }
 }
-
-

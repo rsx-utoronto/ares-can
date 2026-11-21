@@ -12,7 +12,6 @@ module_t CAN_MODULE = kModuleDrill;
 void setup() {
   Serial.begin(115200);
 
-
   SPI.begin();
 
   // Reset MCP2515
@@ -30,13 +29,9 @@ void setup() {
   // rightAngleServo.attach(3);
 
   Serial.println("Servo attached!");
-
 }
 
-float read_ultrasonic_sensor()
-{
-  return random();
-}
+float read_ultrasonic_sensor() { return random(); }
 
 void loop() {
   if (const int recv_cnt = Science::process_rx()) {
@@ -55,13 +50,12 @@ void loop() {
   send_back.receiver_ = kModuleRPi;
   send_back.peripheral_ = kPeripheralUltrasonic;
   send_back.dlc_ = 4;
-  *((float*) (send_back.data_)) = dist; // Copy 32b float into 8b[4]
+  *((float *)(send_back.data_)) = dist; // Copy 32b float into 8b[4]
   Science::tx_buffer.push(send_back);
 
   while (!Science::rx_buffer.empty()) {
     Science::ScienceCANMessage incoming_message = Science::rx_buffer.pop();
     if (incoming_message.peripheral_ = kPeripheralUltrasonic) {
-
     }
   }
 
@@ -71,5 +65,3 @@ void loop() {
     Serial.println(" Messages.");
   }
 }
-
-

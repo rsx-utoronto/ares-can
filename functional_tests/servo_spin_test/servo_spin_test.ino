@@ -1,7 +1,6 @@
 #include <circular_buffer.h>
 #include <science_can.h>
 
-
 #include <Servo.h>
 
 Servo rightAngleServo;
@@ -15,9 +14,8 @@ Servo rightAngleServo;
 module_t CAN_MODULE = kModuleDrill;
 
 void setup() {
-  
-  Serial.begin(115200);
 
+  Serial.begin(115200);
 
   SPI.begin();
 
@@ -36,16 +34,14 @@ void setup() {
   rightAngleServo.attach(3);
 
   // Serial.println("Servo attached!");
-
 }
 
-void servo_step(int steps)
-{
+void servo_step(int steps) {
   static int vel = 0;
   vel += 20 * steps;
   vel %= 360;
 
-  rightAngleServo.write(vel -180);
+  rightAngleServo.write(vel - 180);
 }
 
 void loop() {
@@ -68,5 +64,3 @@ void loop() {
     Serial.println(" Messages.");
   }
 }
-
-
