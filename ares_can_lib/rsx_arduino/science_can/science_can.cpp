@@ -68,12 +68,11 @@ public:
   ResourceState *alloc(uint8_t *base, const uint16_t len,
                        const int frame_index) {
 
-    ResourceState *resource = begin_;
     int cnt = 0;
     while (arr_[cnt].available_ == 1 && cnt < kMaxStoredPacket) {
       cnt++;
     }
-    resource = &arr_[cnt];
+    ResourceState *resource = &arr_[cnt];
     resource->available_ = 0;
     resource->base_ = base;
     resource->pos_ = base;
