@@ -51,11 +51,13 @@ jobs:
           mapfile -d '' cc_files < <(find . -type f \( -name "*.c" -o -name "*.cpp" \) -not -path "*/.*" -print0)
           if [ ${#cc_files[@]} -gt 0 ]; then
             clang-tidy "${cc_files[@]}" -- \
+              --target=avr \
+              -mmcu=atmega328p \
               -I. \
               -I/tmp/mcp2515 \
               -I"${AVR_CORE_DIR}" \
               -I"${SPI_DIR}" \
-              -I/usr/avr/include
+              -isystem/usr/avr/include
           fi
 
   lint-python:
