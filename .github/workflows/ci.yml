@@ -39,17 +39,22 @@ jobs:
           fi
           clang-format --dry-run --Werror "${files[@]}"
 
-      - name: Run clang-tidy on C/C++ sources
+      - name: Run clang-tidy on C/C++ sources (optional)
         run: |
           set -euo pipefail
-          SPI_DIR=$(find /home/runner/.arduino15/packages/arduino -path "*/libraries/SPI/src" -type d | head -n 1)
-          if [ -z "${SPI_DIR}" ]; then
-            echo "Could not locate SPI.h directory" >&2
+          AVR_CORE_DIR=$(find /home/runner/.arduino15/packages/arduino/hardware/avr -path "*/cores/arduino" -type d | head -n 1)
+          SPI_DIR=$(find /home/runner/.arduino15/packages/arduino/hardware/avr -path "*/libraries/SPI/src" -type d | head -n 1)
+          if [ -z "${AVR_CORE_DIR}" ] || [ -z "${SPI_DIR}" ]; then
+            echo "Could not locate Arduino core or SPI header directories" >&2
             exit 1
           fi
           mapfile -d '' cc_files < <(find . -type f \( -name "*.c" -o -name "*.cpp" \) -not -path "*/.*" -print0)
           if [ ${#cc_files[@]} -gt 0 ]; then
-            clang-tidy "${cc_files[@]}" -- -I. -I/tmp/mcp2515 -I"${SPI_DIR}"
+            clang-tidy "${cc_files[@]}" -- \
+              -I. \
+              -I/tmp/mcp2515 \
+              -I"${AVR_CORE_DIR}" \
+              -I"${SPI_DIR}"
           fi
 
   lint-python:
