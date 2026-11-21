@@ -1,6 +1,5 @@
-#include <science_can.h>
 #include <devices/can_config.h>
-
+#include <science_can.h>
 
 #include <Servo.h>
 
@@ -38,11 +37,9 @@ void setup() {
   optics_servo.attach(OPTICS_SERVO_PIN);
 
   // Serial.println("Servo attached!");
-
 }
 
-void servo_step(int steps, int angle)
-{
+void servo_step(int steps, int angle) {
   static int vel = 0;
   vel += angle * steps;
   vel %= 180;
