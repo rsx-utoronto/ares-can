@@ -54,7 +54,8 @@ jobs:
               -I. \
               -I/tmp/mcp2515 \
               -I"${AVR_CORE_DIR}" \
-              -I"${SPI_DIR}"
+              -I"${SPI_DIR}" \
+              -I/usr/avr/include
           fi
 
   lint-python:
