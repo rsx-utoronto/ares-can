@@ -1,7 +1,7 @@
 name: RPi Test
 
 on:
-  push: # Runs tests for all branches 
+  push: # Runs tests for all branches
   workflow_dispatch:
 
 permissions:
@@ -19,6 +19,10 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y clang-format clang-tidy
 
+      - name: Install mcp2515 library headers
+        run: |
+          git clone --depth 1 https://github.com/autowp/arduino-mcp2515.git /tmp/mcp2515
+
       - name: Check formatting with clang-format
         run: |
           set -euo pipefail
@@ -34,9 +38,9 @@ jobs:
           set -euo pipefail
           mapfile -d '' cc_files < <(find . -type f \( -name "*.c" -o -name "*.cpp" \) -not -path "*/.*" -print0)
           if [ ${#cc_files[@]} -gt 0 ]; then
-            clang-tidy "${cc_files[@]}" -- -I.
+            clang-tidy "${cc_files[@]}" -- -I. -I/tmp/mcp2515
           fi
-          
+
   lint-python:
     name: Lint Python (Ruff)
     runs-on: ubuntu-latest
