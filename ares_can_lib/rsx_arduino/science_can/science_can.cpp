@@ -57,7 +57,7 @@ struct ResourceState {
 };
 
 volatile bool run_mpm = false;
-volatile int recv;
+volatile module_t recv;
 struct ResourceTable {
 public:
   ResourceTable() {
@@ -187,8 +187,8 @@ public:
 
 private:
   ResourceState arr_[kMaxStoredPacket];
-  const ResourceState *begin_;
-  const ResourceState *end_;
+  ResourceState *begin_;
+  ResourceState *end_;
 };
 
 static ResourceTable send_table;
