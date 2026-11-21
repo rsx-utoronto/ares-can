@@ -1,14 +1,13 @@
 # Enables RPi to send a series spin commands to a servo over CAN
 # Able to be recieved by arduino
 
+from ares_can_lib.rsx_python.can_utilities import initialize_bus
 from ares_can_lib.rsx_python.science_can import *
-from ares_can_lib.rsx_python.CAN_utilities import initialize_bus
 
 # Instantiate CAN bus
 BUS = initialize_bus()
 
-import time
-while (True):
+while True:
     msg_received = ScienceCanPacket()
     process_rx(BUS)
     if RX_BUFFER == []:
