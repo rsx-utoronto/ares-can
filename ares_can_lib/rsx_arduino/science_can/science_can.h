@@ -2,11 +2,10 @@
 
 #include <mcp2515.h>
 
-
 #include <inttypes.h>
 
-#include "devices/science_device.h"
 #include "circular_buffer.h"
+#include "devices/science_device.h"
 
 #define PRINT_ALL_CAN // Switch to print all CAN Messages
 #define PRINT_FILTERED_CAN
@@ -22,18 +21,18 @@ extern MCP2515 mcp2515;
 void can_setup();
 
 struct ScienceCANMessage {
-    uint8_t priority_;
+  uint8_t priority_;
 
-    // 4'b0000 if normal CAN msg, image id otherwise
-    uint8_t multipacket_id_;
-    uint8_t sender_;
-    uint8_t receiver_;
-    uint8_t peripheral_;
+  // 4'b0000 if normal CAN msg, image id otherwise
+  uint8_t multipacket_id_;
+  uint8_t sender_;
+  uint8_t receiver_;
+  uint8_t peripheral_;
 
-    // Extra information for normal CAN msg, Frame ID for Extended CAN packet.
-    uint16_t extra_;
-    uint8_t dlc_;
-    uint8_t data_[8];
+  // Extra information for normal CAN msg, Frame ID for Extended CAN packet.
+  uint16_t extra_;
+  uint8_t dlc_;
+  uint8_t data_[8];
 };
 
 using CANBuffer = CircularBuffer<ScienceCANMessage, 8>;
@@ -41,11 +40,9 @@ using CANBuffer = CircularBuffer<ScienceCANMessage, 8>;
 extern CANBuffer rx_buffer;
 extern CANBuffer tx_buffer;
 
-void parse_can_message(const can_frame& frame,
-    ScienceCANMessage* message);
+void parse_can_message(const can_frame &frame, ScienceCANMessage *message);
 
-void to_can_frame(const ScienceCANMessage* message,
-    can_frame* frame);
+void to_can_frame(const ScienceCANMessage *message, can_frame *frame);
 
 int process_rx();
 
@@ -54,9 +51,8 @@ int process_tx();
 int process_can();
 
 namespace MPM {
-struct BufferInfo
-{
-  uint8_t* base_;
+struct BufferInfo {
+  uint8_t *base_;
   uint16_t len_;
   uint8_t available;
 };
@@ -64,6 +60,5 @@ struct BufferInfo
 extern BufferInfo sample_extraction_buffer;
 
 } // namespace MPM
-
 
 }; // namespace Science
