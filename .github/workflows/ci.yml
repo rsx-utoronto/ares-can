@@ -43,9 +43,10 @@ jobs:
         run: |
           set -euo pipefail
           AVR_CORE_DIR=$(find /home/runner/.arduino15/packages/arduino/hardware/avr -path "*/cores/arduino" -type d | head -n 1)
+          AVR_VARIANT_DIR=$(find /home/runner/.arduino15/packages/arduino/hardware/avr -path "*/variants/standard" -type d | head -n 1)
           SPI_DIR=$(find /home/runner/.arduino15/packages/arduino/hardware/avr -path "*/libraries/SPI/src" -type d | head -n 1)
-          if [ -z "${AVR_CORE_DIR}" ] || [ -z "${SPI_DIR}" ]; then
-            echo "Could not locate Arduino core or SPI header directories" >&2
+          if [ -z "${AVR_CORE_DIR}" ] || [ -z "${AVR_VARIANT_DIR}" ] || [ -z "${SPI_DIR}" ]; then
+            echo "Could not locate Arduino core, variant, or SPI header directories" >&2
             exit 1
           fi
           mapfile -d '' cc_files < <(find . -type f \( -name "*.c" -o -name "*.cpp" \) -not -path "*/.*" -print0)
@@ -56,6 +57,7 @@ jobs:
               -I. \
               -I/tmp/mcp2515 \
               -I"${AVR_CORE_DIR}" \
+              -I"${AVR_VARIANT_DIR}" \
               -I"${SPI_DIR}" \
               -isystem/usr/avr/include
           fi
