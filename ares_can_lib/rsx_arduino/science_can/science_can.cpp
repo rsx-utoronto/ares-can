@@ -67,7 +67,7 @@ public:
     end_ = &arr_[kMaxStoredPacket];
   }
 
-  ResourceState* alloc(const uint8_t* base,
+  ResourceState* alloc(uint8_t* base,
     const uint16_t len,
     const int frame_index)
   {

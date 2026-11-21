@@ -11,6 +11,7 @@ enum module_t : uint8_t {
     kModuleMotor = 5,
     kModuleMultispectral = 6,
     kModuleSorter = 7,
+    kModuleDiffBar = 8,
     kModuleCount
 };
 
@@ -25,6 +26,7 @@ enum peripherals_t : uint8_t {
     kPeripheralElectromagnet = 7,
     kPeripheralSPARKMotor = 8,
     kPeripheralSpectrometer = 9,
+    kPeripheralAbsoluteEncoder = 8,
     kPeripheralCount
 };
 // Sender Module, Receive Module, Peripheral Module
